@@ -1,0 +1,43 @@
+#!/bin/sh
+function help () {
+  echo "WPInstall will install WordPress for you locally. Include all the parameters:"
+  echo "  1) Name of Directory";
+  echo "  2) Path to Parent Directory";
+}
+if [ $1 = 'help' ]; then
+  help
+else
+  if [ $1 ]
+  then
+    name=$1
+  else
+    name="wordpress"
+  fi
+  if [ $2 ]
+  then
+    path=$2
+  else
+    path="./"
+  fi
+      dbName=$name
+      dbName+="_WP"
+      curl -o "$path/$name.zip" http://wordpress.org/latest.zip
+      echo "Extracting zip file... "
+      mkdir "$path/$name"
+      tar xzfp "$path/$name.zip" -C "$path/$name"
+      mv $path/$name/wordpress/* $path/$name/
+      rmdir $path/$name/wordpress
+      rm $path/$name.zip
+      echo "Extraction Complete"
+      read -s -p "Enter MYSQL Username: " mysqluser
+      echo ""
+      read -s -p "Enter MYSQL Password: " mysqlpassword
+      echo ""
+      mysql -u $mysqluser -p$mysqlpassword -Bse "CREATE DATABASE $dbName;"
+      mysql -u $mysqluser -p$mysqlpassword -Bse "GRANT ALL ON ${dbName}.* to $mysqluser;"
+      echo "Database Created Successfully!"
+      cp $path/$name/wp-config-sample.php $path/$name/wp-config.php
+      sed -e "s/database_name_here/$dbName/g" -e "s/username_here/$mysqluser/g" -e "s/password_here/$mysqlpassword/g" -e '/DB_COLLATE/ a\
+        define("FS_METHOD", "direct");' < $path/$name/wp-config-sample.php > $path/$name/wp-config.php
+      echo "Congratulations!!!"
+fi
