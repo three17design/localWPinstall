@@ -14,5 +14,11 @@ wpinstall DirectoryName path/to/parent/directory
 
 wpinstall help
 
+If you don't know how to install this and you're on a mac, download the ZIP. Unzip it. Drag the wpinstall file to your desktop. Open the terminal and run this:
+
+sudo mv ~/Desktop/wpinstall /Usr/bin
+
+It will ask you for an administrator's password. And then you might need to restart terminal.
+
 -Jason
 Three 17 Design
